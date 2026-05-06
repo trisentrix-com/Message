@@ -1,11 +1,11 @@
 ---
-description: Guard patterns for authentication and authorization in Evolution API
+description: Guard patterns for authentication and authorization in Message API
 globs:
   - "src/api/guards/**/*.ts"
 alwaysApply: false
 ---
 
-# Evolution API Guard Rules
+# Message API Guard Rules
 
 ## Guard Structure Pattern
 

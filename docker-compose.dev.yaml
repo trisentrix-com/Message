@@ -1,35 +1,35 @@
 services:
   api:
-    container_name: evolution_api
-    image: evolution/api:local
+    container_name: message_api
+    image: message/api:local
     build: .
     restart: always
     ports:
       - 8080:8080
     volumes:
-      - evolution_instances:/evolution/instances
+      - message_instances:/message/instances
     networks:
-      - evolution-net
+      - message-net
     env_file:
       - .env
     expose:
       - 8080
 
   frontend:
-    container_name: evolution_frontend
-    image: evolution/manager:local
-    build: ./evolution-manager-v2
+    container_name: message_frontend
+    image: message/manager:local
+    build: ./Message-manager-v2   
     restart: always
     ports:
-      - "3000:80"
+      - "4040:80"
     networks:
-      - evolution-net
+      - message-net
 
 volumes:
-  evolution_instances:
+  message_instances:
 
 
 networks:
-  evolution-net:
-    name: evolution-net
+  message-net:
+    name: message-net
     driver: bridge

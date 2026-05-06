@@ -1,13 +1,13 @@
 FROM node:24-alpine AS builder
 
 RUN apk update && \
-    apk add --no-cache git ffmpeg wget curl bash openssl
+    apk add --no-cache git ffmpeg wget curl bash openssl dos2unix
 
-LABEL version="2.3.1" description="Api to control whatsapp features through http requests." 
-LABEL maintainer="Davidson Gomes" git="https://github.com/DavidsonGomes"
-LABEL contact="contato@evolution-api.com"
+LABEL version="2.3.7" description="Message API to control whatsapp features through http requests." 
+LABEL maintainer="message" git="https://github.com/message/message"
+LABEL contact="support@message-api.com"
 
-WORKDIR /evolution
+WORKDIR /message
 
 COPY ./package*.json ./
 COPY ./tsconfig.json ./
@@ -19,7 +19,7 @@ COPY ./src ./src
 COPY ./public ./public
 COPY ./prisma ./prisma
 COPY ./manager ./manager
-COPY ./.env.example ./.env
+COPY ./env.example ./.env
 COPY ./runWithProvider.js ./
 
 COPY ./Docker ./Docker
@@ -38,20 +38,20 @@ RUN apk update && \
 ENV TZ=America/Sao_Paulo
 ENV DOCKER_ENV=true
 
-WORKDIR /evolution
+WORKDIR /message
 
-COPY --from=builder /evolution/package.json ./package.json
-COPY --from=builder /evolution/package-lock.json ./package-lock.json
+COPY --from=builder /message/package.json ./package.json
+COPY --from=builder /message/package-lock.json ./package-lock.json
 
-COPY --from=builder /evolution/node_modules ./node_modules
-COPY --from=builder /evolution/dist ./dist
-COPY --from=builder /evolution/prisma ./prisma
-COPY --from=builder /evolution/manager ./manager
-COPY --from=builder /evolution/public ./public
-COPY --from=builder /evolution/.env ./.env
-COPY --from=builder /evolution/Docker ./Docker
-COPY --from=builder /evolution/runWithProvider.js ./runWithProvider.js
-COPY --from=builder /evolution/tsup.config.ts ./tsup.config.ts
+COPY --from=builder /message/node_modules ./node_modules
+COPY --from=builder /message/dist ./dist
+COPY --from=builder /message/prisma ./prisma
+COPY --from=builder /message/manager ./manager
+COPY --from=builder /message/public ./public
+COPY --from=builder /message/.env ./.env
+COPY --from=builder /message/Docker ./Docker
+COPY --from=builder /message/runWithProvider.js ./runWithProvider.js
+COPY --from=builder /message/tsup.config.ts ./tsup.config.ts
 
 ENV DOCKER_ENV=true
 

@@ -70,7 +70,13 @@ async function bootstrap() {
 
   app.use('/store', express.static(join(ROOT_DIR, 'store')));
 
-  app.use('/', router);
+  app.get('/', (req, res) => {
+    res.redirect('/message');
+  });
+
+  app.use('/manager', express.static(join(ROOT_DIR, 'manager', 'dist')));
+
+  app.use('/message', router);
 
   app.use(
     (err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -157,7 +163,9 @@ async function bootstrap() {
     Sentry.setupExpressErrorHandler(app);
   }
 
-  server.listen(httpServer.PORT, () => logger.log(httpServer.TYPE.toUpperCase() + ' - ON: ' + httpServer.PORT));
+  server.listen(httpServer.PORT, '0.0.0.0', () => {
+    console.log(`Server running on http://localhost:${httpServer.PORT}`);
+  });
 
   initWA().catch((error) => {
     logger.error('Error loading instances: ' + error);

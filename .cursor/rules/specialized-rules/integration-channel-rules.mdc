@@ -1,11 +1,11 @@
 ---
-description: Channel integration patterns for Evolution API
+description: Channel integration patterns for Message API
 globs:
   - "src/api/integrations/channel/**/*.ts"
 alwaysApply: false
 ---
 
-# Evolution API Channel Integration Rules
+# Message API Channel Integration Rules
 
 ## Channel Controller Pattern
 
@@ -49,8 +49,8 @@ export class ChannelController {
       return new BusinessStartupService(/* dependencies */);
     }
 
-    if (instanceData.integration === Integration.EVOLUTION) {
-      return new EvolutionStartupService(/* dependencies */);
+    if (instanceData.integration === Integration.message) {
+      return new messageStartupService(/* dependencies */);
     }
 
     if (instanceData.integration === Integration.WHATSAPP_BAILEYS) {
@@ -77,7 +77,7 @@ export class EvolutionController extends ChannelController implements ChannelCon
     const numberId = data.numberId;
 
     if (!numberId) {
-      this.logger.error('WebhookService -> receiveWebhookEvolution -> numberId not found');
+      this.logger.error('WebhookService -> receiveWebhookmessage -> numberId not found');
       return;
     }
 
@@ -156,7 +156,7 @@ export class ChannelStartupService {
 
 ### Extended Channel Service
 ```typescript
-export class EvolutionStartupService extends ChannelStartupService {
+export class messageStartupService extends ChannelStartupService {
   constructor(
     configService: ConfigService,
     eventEmitter: EventEmitter2,
@@ -168,14 +168,14 @@ export class EvolutionStartupService extends ChannelStartupService {
   }
 
   public async sendMessage(data: SendTextDto): Promise<any> {
-    // Evolution-specific message sending logic
-    const response = await this.evolutionApiCall('/send-message', data);
+    // message-specific message sending logic
+    const response = await this.messageApiCall('/send-message', data);
     return response;
   }
 
   public async connectToWhatsapp(data: any): Promise<void> {
-    // Evolution-specific connection logic
-    this.logger.log('Connecting to Evolution API');
+    // message-specific connection logic
+    this.logger.log('Connecting to Message API');
     
     // Set up webhook listeners
     this.setupWebhookHandlers();
@@ -184,8 +184,8 @@ export class EvolutionStartupService extends ChannelStartupService {
     await this.initializeConnection(data);
   }
 
-  private async evolutionApiCall(endpoint: string, data: any): Promise<any> {
-    const config = this.configService.get<Evolution>('EVOLUTION');
+  private async messageApiCall(endpoint: string, data: any): Promise<any> {
+    const config = this.configService.get<message>('message');
     
     try {
       const response = await axios.post(`${config.API_URL}${endpoint}`, data, {
@@ -197,8 +197,8 @@ export class EvolutionStartupService extends ChannelStartupService {
       
       return response.data;
     } catch (error) {
-      this.logger.error(`Evolution API call failed: ${error.message}`);
-      throw new InternalServerErrorException('Evolution API call failed');
+      this.logger.error(`Message API call failed: ${error.message}`);
+      throw new InternalServerErrorException('Message API call failed');
     }
   }
 
@@ -207,7 +207,7 @@ export class EvolutionStartupService extends ChannelStartupService {
   }
 
   private async initializeConnection(data: any): Promise<void> {
-    // Initialize connection with Evolution API
+    // Initialize connection with Message API
   }
 }
 ```
@@ -325,7 +325,7 @@ export class BaileysStartupService extends ChannelStartupService {
       auth: state,
       logger: P({ level: 'error' }),
       printQRInTerminal: false,
-      browser: ['Evolution API', 'Chrome', '4.0.0'],
+      browser: ['Message API', 'Chrome', '4.0.0'],
       defaultQueryTimeoutMs: 60000,
     });
 
@@ -431,7 +431,7 @@ export class ChannelRouter {
   constructor(configService: any, ...guards: any[]) {
     this.router = Router();
 
-    this.router.use('/', new EvolutionRouter(configService).router);
+    this.router.use('/', new messageRouter(configService).router);
     this.router.use('/', new MetaRouter(configService).router);
     this.router.use('/baileys', new BaileysRouter(...guards).router);
   }
@@ -440,12 +440,12 @@ export class ChannelRouter {
 
 ### Specific Channel Router
 ```typescript
-export class EvolutionRouter extends RouterBroker {
+export class messageRouter extends RouterBroker {
   constructor(private readonly configService: ConfigService) {
     super();
     this.router
       .post(this.routerPath('webhook'), async (req, res) => {
-        const response = await evolutionController.receiveWebhook(req.body);
+        const response = await EvolutionController.receiveWebhook(req.body);
         return res.status(HttpStatus.OK).json(response);
       });
   }
@@ -471,7 +471,7 @@ type ChannelDataType = {
 export enum Integration {
   WHATSAPP_BUSINESS = 'WHATSAPP-BUSINESS',
   WHATSAPP_BAILEYS = 'WHATSAPP-BAILEYS',
-  EVOLUTION = 'EVOLUTION',
+  message = 'message',
 }
 ```
 
@@ -504,19 +504,19 @@ public async sendMessage(data: SendTextDto): Promise<any> {
 
 ### Channel Service Testing
 ```typescript
-describe('EvolutionStartupService', () => {
-  let service: EvolutionStartupService;
+describe('messageStartupService', () => {
+  let service: messageStartupService;
   let configService: jest.Mocked<ConfigService>;
   let eventEmitter: jest.Mocked<EventEmitter2>;
 
   beforeEach(() => {
     const mockConfig = {
       get: jest.fn().mockReturnValue({
-        API_URL: 'https://api.evolution.com',
+        API_URL: 'https://api.message.com',
       }),
     };
 
-    service = new EvolutionStartupService(
+    service = new messageStartupService(
       mockConfig as any,
       eventEmitter,
       prismaRepository,

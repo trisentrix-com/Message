@@ -68,7 +68,7 @@ export class ChannelController {
       );
     }
 
-    if (instanceData.integration === Integration.EVOLUTION) {
+    if (instanceData.integration === Integration.message) {
       return new EvolutionStartupService(
         data.configService,
         data.eventEmitter,

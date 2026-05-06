@@ -1,10 +1,10 @@
-# Evolution API - AI Agent Guidelines
+# Message API - AI Agent Guidelines
 
-This document provides comprehensive guidelines for AI agents (Claude, GPT, Cursor, etc.) working with the Evolution API codebase.
+This document provides comprehensive guidelines for AI agents (Claude, GPT, Cursor, etc.) working with the Message API codebase.
 
 ## Project Overview
 
-**Evolution API** is a production-ready, multi-tenant WhatsApp API platform built with Node.js, TypeScript, and Express.js. It supports multiple WhatsApp providers and extensive integrations with chatbots, CRM systems, and messaging platforms.
+**Message API** is a production-ready, multi-tenant WhatsApp API platform built with Node.js, TypeScript, and Express.js. It supports multiple WhatsApp providers and extensive integrations with chatbots, CRM systems, and messaging platforms.
 
 ## Project Structure & Module Organization
 
@@ -14,7 +14,7 @@ This document provides comprehensive guidelines for AI agents (Claude, GPT, Curs
   - `api/services/` – Business logic (core functionality)
   - `api/routes/` – Express route definitions (RouterBroker pattern)
   - `api/integrations/` – External service integrations
-    - `channel/` – WhatsApp providers (Baileys, Business API, Evolution)
+    - `channel/` – WhatsApp providers (Baileys, Business API, message)
     - `chatbot/` – AI/Bot integrations (OpenAI, Dify, Typebot, Chatwoot)
     - `event/` – Event systems (WebSocket, RabbitMQ, SQS, NATS, Pusher)
     - `storage/` – File storage (S3, MinIO)
@@ -121,10 +121,10 @@ export class ExampleService {
   public async find(instance: InstanceDto): Promise<ExampleDto | null> {
     try {
       const result = await this.waMonitor.waInstances[instance.instanceName].findData();
-      return result || null; // Return null on not found (Evolution pattern)
+      return result || null; // Return null on not found (message pattern)
     } catch (error) {
       this.logger.error('Error finding data:', error);
-      return null; // Return null on error (Evolution pattern)
+      return null; // Return null on error (message pattern)
     }
   }
 }
@@ -161,7 +161,7 @@ export class ExampleRouter extends RouterBroker {
 
 #### DTO Pattern (Simple Classes)
 ```typescript
-// CORRECT - Evolution API pattern (no decorators)
+// CORRECT - Message API pattern (no decorators)
 export class ExampleDto {
   name: string;
   description?: string;
@@ -170,7 +170,7 @@ export class ExampleDto {
 
 // INCORRECT - Don't use class-validator decorators
 export class BadExampleDto {
-  @IsString() // ❌ Evolution API doesn't use decorators
+  @IsString() // ❌ Message API doesn't use decorators
   name: string;
 }
 ```
@@ -230,7 +230,7 @@ const result = await this.prismaRepository.instance.findUnique({
 ### Channel Integration (WhatsApp Providers)
 - **Baileys**: WhatsApp Web with QR code authentication
 - **Business API**: Official Meta WhatsApp Business API  
-- **Evolution API**: Custom WhatsApp integration
+- **Message API**: Custom WhatsApp integration
 - **Pattern**: Extend base channel service classes
 
 ### Chatbot Integration
@@ -317,7 +317,7 @@ export DATABASE_PROVIDER=postgresql  # or mysql
 
 ### Vulnerability Reporting
 - See `SECURITY.md` for security vulnerability reporting process
-- Contact: `contato@evolution-api.com`
+- Contact: `contato@message-api.com`
 
 ## Communication Standards
 

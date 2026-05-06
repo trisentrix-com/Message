@@ -1,3 +1,5 @@
-[submodule "evolution-manager-v2"]
-	path = evolution-manager-v2
-	url = https://github.com/EvolutionAPI/evolution-manager-v2.git
+[submodule "message-manager-v2"]
+	path = Message-manager-v2	url = https://github.com/messageAPI/message-manager-v2.git
+[submodule "Message-manager-v2"]
+	path = Message-manager-v2
+	url = https://github.com/trisentrix-com/Message-manager-v2

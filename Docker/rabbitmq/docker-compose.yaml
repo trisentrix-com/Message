@@ -20,6 +20,6 @@ volumes:
 
 
 networks:
-  evolution-net:
-    name: evolution-net
+  message-net:
+    name: message-net
     driver: bridge
